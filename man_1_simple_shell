@@ -1,11 +1,11 @@
 .TH HSH 1
 .SH NAME
-hsh \- Holberton Shell	
+hsh \- Simple Shell	
 .SH SYNOPSIS
 .B hsh
 [command] [options ...]
 .SH COPYRIGHT
-hsh \- is a holberton school first trimester project
+hsh \- is an ALX school first sprint project
 .SH DESCRIPTION
 .B hsh
 is a shell command interpreter that executes command read from the standard input or from file.
@@ -50,7 +50,8 @@ command1 || command2
 .PP
 command2 is executed if and only if command1 returns a non-zero exit status.  The return status of AND and OR lists is the exit status of the last command executed in the list.
 .SH AUTHORS
-Sebri Issam \- Holberton School Software Engineer Student
+Bett Brian\- ALX School Software Engineering Student
+and Malki\- ALX School Software Engineering Student
 .SH VERSIONS
 .B hsh
 V1.0.0
