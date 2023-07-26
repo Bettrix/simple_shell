@@ -125,6 +125,9 @@ char **tokenizer(char *str);
 char *_which(char *command, char *fullpath, char *path);
 int child(char *fullpath, char **tokens);
 void errors(int error);
+void print_number(unsigned int n)
+void print_number_in(int n)
+int _putchar(char c)
 
 /* utility functions */
 void _puts(char *str);
