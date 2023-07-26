@@ -1,38 +1,34 @@
 #include "shell.h"
-#define TOK_DELIM " \t\r\n\a"
 
 /**
- * tokenize - break a string in separated tokens using a set of delimiters
- * @line: line from standar input returned from read_line function
- * Return: array of tokens (strings)
+ * tokenizer - tokenizes string
+ * @str: user input
+ * Return: pointer to array of tokens
  */
-char **tokenize(char *line)
+char **tokenizer(char *str)
 {
-	int bufsize = _worddelimcount(line, ' '), i = 0;
-	char **tokens = NULL;
-	char *token = NULL;
-	/* alloc space for tokens */
-	tokens = malloc(sizeof(char *) * (bufsize + 1));
-	if (!tokens)
-	/* check if malloc works propertly */
+	char **tokens;
+	char *token;
+	unsigned int i;
+
+	tokens = malloc(sizeof(char) * BUFFER);
+	if (tokens == NULL)
 	{
-		free(tokens);
-		perror("allocation error");
+		errors(3);
 		exit(EXIT_FAILURE);
 	}
-	/* take a pointer to the first token */
-	token = strtok(line, TOK_DELIM);
-	/* run the string until find the end */
+
+	token = strtok(str, "\n\t\r ");
+
+	i = 0;
 	while (token != NULL)
 	{
-		/* save the token in a array of strings */
 		tokens[i] = token;
+		token = strtok(NULL, "\n\t\r ");
 		i++;
-		/* continue breaking the string in token*/
-		/* everytime return a pointer to that token */
-		token = strtok(NULL, TOK_DELIM);
 	}
+
 	tokens[i] = NULL;
-	/* return array of strings to main */
+
 	return (tokens);
 }

@@ -4,73 +4,147 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <signal.h>
+#include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+
+#define BUFFER 1024
+#define TRUE 1
+#define PROMPT "$ "
+/* error strings */
+#define ERR_MALLOC "Unable to malloc space\n"
+#define ERR_FORK "Unable to fork and create child process\n"
+#define ERR_PATH "No such file or directory\n"
+extern char **environ;
 
 /**
- * @brief prompt character and color style
- * the \033[ way
- * usage: WAY RED to print red
- * usage: WAY B CYN bold cyan
- */
-#define PROMPT "$ "
-#define WAY "\033["
-#define DEF "0m"
-#define BLK "30m"
-#define RED "31m"
-#define GRN "32m"
-#define YLW "33m"
-#define BLU "34m"
-#define MAG "35m"
-#define CYN "36m"
-#define WHI "37m"
-#define B "1;"
-#define BRAND WAY B CYN 
-#define RESET WAY DEF
+ * struct list_s - linked list of variables
+ * @value: value
+ * @next: pointer to next node
+ *
+ * Description: generic linked list struct for variables.
+**/
+typedef struct list_s
+{
+	char *value;
+	struct list_s *next;
+} list_s;
 
-/*delimiter */
-#define ENVDELIM ":="
+/**
+ * struct built_s - linked list of builtins
+ * @name: name of builtin
+ * @p: pointer to function
+ *
+ * Description: struct for builtin functions.
+**/
+typedef struct built_s
+{
+	char *name;
+	int (*p)(void);
+} built_s;
 
-/* lifetime cicle */
-char *read_line(void);
-char **tokenize(char *line);
-char **set_env(char **envp);
-char *_getenv(const char *name, char **envp);
-char **fullpath(char *path, char *envdelim);
-int hsh_execute(char **args, char **directories);
-int hsh_runcomand(char **args, char **pathparsed);
+void prompt(int fd, struct stat buf);
+char *_getline(FILE *fp);
+char **tokenizer(char *str);
+char *_which(char *command, char *fullpath, char *path);
+int child(char *fullpath, char **tokens);
+void errors(int error);
 
-/* child processes */
-int launch_child(char **args, char **directories);
-int hsh_runcomand(char **args, char **directories);
-
-/* BUILT-INS */
-int hsh_cd(char **args);
-int hsh_help(void);
-int hsh_exit(void);
-
-/* string functions */
-char *_strcat(char *str1, char *str2);
-int _puts(char *string);
-int _putchar(char c);
-int word_count(char *str);
-int _strlen(char *str);
-int _strcmp(char *s1, char *s2);
+/* utility functions */
+void _puts(char *str);
+int _strlen(char *s);
+int _strcmp(char *name, char *variable, unsigned int length);
+int _strncmp(char *name, char *variable, unsigned int length);
 char *_strcpy(char *dest, char *src);
-int _worddelimcount(char *string, char delim);
 
-/* custom functions */
-char *_getline(void);
+/* prototypes for builtins */
+int shell_env(void);
+int shell_exit(void);
+int builtin_execute(char **tokens);
+int shell_num_builtins(built_s builtin[]);
 
-/* helper functions */
-void handle_ctrlc(int n);
+/* prototypes for the helper functions for path linked list */
+char *_getenv(const char *name);
+char **copy_env(char **environ_copy, unsigned int environ_length);
+list_s *pathlist(char *variable, list_s *head);
 
-#endif
+/* prototypes for free functions */
+void free_all(char **tokens, char *path, char *line, char *fullpath, int flag);
+void free_dp(char **array, unsigned int length);
+#endif /* SHELL_H */
+#ifndef SHELL_H
+#define SHELL_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#define BUFFER 1024
+#define TRUE 1
+#define PROMPT "$ "
+/* error strings */
+#define ERR_MALLOC "Unable to malloc space\n"
+#define ERR_FORK "Unable to fork and create child process\n"
+#define ERR_PATH "No such file or directory\n"
+extern char **environ;
+
+/**
+ * struct list_s - linked list of variables
+ * @value: value
+ * @next: pointer to next node
+ *
+ * Description: generic linked list struct for variables.
+**/
+typedef struct list_s
+{
+	char *value;
+	struct list_s *next;
+} list_s;
+
+/**
+ * struct built_s - linked list of builtins
+ * @name: name of builtin
+ * @p: pointer to function
+ *
+ * Description: struct for builtin functions.
+**/
+typedef struct built_s
+{
+	char *name;
+	int (*p)(void);
+} built_s;
+
+void prompt(int fd, struct stat buf);
+char *_getline(FILE *fp);
+char **tokenizer(char *str);
+char *_which(char *command, char *fullpath, char *path);
+int child(char *fullpath, char **tokens);
+void errors(int error);
+
+/* utility functions */
+void _puts(char *str);
+int _strlen(char *s);
+int _strcmp(char *name, char *variable, unsigned int length);
+int _strncmp(char *name, char *variable, unsigned int length);
+char *_strcpy(char *dest, char *src);
+
+/* prototypes for builtins */
+int shell_env(void);
+int shell_exit(void);
+int builtin_execute(char **tokens);
+int shell_num_builtins(built_s builtin[]);
+
+/* prototypes for the helper functions for path linked list */
+char *_getenv(const char *name);
+char **copy_env(char **environ_copy, unsigned int environ_length);
+list_s *pathlist(char *variable, list_s *head);
+
+/* prototypes for free functions */
+void free_all(char **tokens, char *path, char *line, char *fullpath, int flag);
+void free_dp(char **array, unsigned int length);
+#endif /* SHELL_H */
