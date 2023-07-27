@@ -4,6 +4,10 @@
  * @n: Unisigned Integer
  * Return: Void
  */
+int _putchar(char c)
+{
+	                return (write(1, &c, 1));
+}
 void print_number(unsigned int n)
 {
 	unsigned int x = n;
